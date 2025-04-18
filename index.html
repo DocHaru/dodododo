@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>佳佳乐©Do</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game">
+    <div id="header">
+      <div>得分: <span id="score">0</span></div>
+      <div>历史最高: <span id="high-score">0</span></div>
+      <div>剩余时间: <span id="timer">120</span>s</div>
+    </div>
+
+    <div class="music-control">
+      <span>背景音乐：</span>
+      <button id="music-btn" class="music-toggle">🔊</button>
+    </div>
+
+    <div id="combo" class="combo">COMBO!</div>
+    <div id="board" class="board"></div>
+
+    <div id="result" class="hidden">
+      <h2>游戏结束</h2>
+      <p>本局得分: <span id="final-score">0</span></p>
+    </div>
+  </div>
+
+  <button id="start-btn" class="fixed-btn">开始游戏</button>
+
+  <!-- 音频文件 -->
+  <audio id="bgm" src="assets/bgm.mp3" preload="auto"></audio>
+  <audio id="click-sound" src="assets/click.mp3" preload="auto"></audio>
+  <audio id="combo-sound" src="assets/combo.mp3" preload="auto"></audio>
+
+  <!-- 正确引入JS -->
+  <script src="script.js"></script>
+</body>
+</html>
