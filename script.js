@@ -28,28 +28,22 @@ const state = {
 
 // 初始化游戏
 function initGame() {
-  // 重置状态
   state.score = 0;
   state.timer = 120;
   state.combo = 0;
   state.selected = null;
   state.isInitialMatch = true;
   
-  // 更新UI
   elements.scoreEl.textContent = state.score;
   elements.timerEl.textContent = state.timer;
   elements.finalScoreEl.textContent = state.score;
   elements.resultEl.classList.add("hidden");
   elements.startBtn.textContent = "游戏中...";
   
-  // 清除旧计时器
   clearInterval(state.timerInterval);
-  
-  // 清空并生成新棋盘
   elements.boardEl.innerHTML = "";
   generateBoard();
   
-  // 启动计时器
   state.timerInterval = setInterval(() => {
     state.timer--;
     elements.timerEl.textContent = state.timer;
@@ -69,18 +63,17 @@ function generateBoard() {
     }
   }
   
-  // 初始消除不计分
   setTimeout(() => {
     resolveMatches();
     state.isInitialMatch = false;
   }, 100);
 }
 
-// 创建单元格
+// 创建单元格 - 简化版
 function createCell(row, col, type) {
   const el = document.createElement("div");
   el.className = "cell";
-  const img = new Image();
+  const img = document.createElement("img");
   img.src = `assets/icon${type}.png`;
   el.append(img);
   el.onclick = () => handleClick(row, col);
@@ -110,7 +103,6 @@ function handleClick(row, col) {
     return;
   }
 
-  // 尝试交换
   swapCells(state.selected, current);
   const hadMatch = hasMatch();
 
@@ -168,7 +160,7 @@ function findMatches() {
   return matches;
 }
 
-// 解析匹配
+// 解析匹配 - 简化版
 function resolveMatches() {
   const matches = findMatches();
   if (matches.length === 0) {
@@ -177,7 +169,6 @@ function resolveMatches() {
     return;
   }
 
-  // 初始消除不计分
   if (!state.isInitialMatch) {
     state.combo++;
     state.score += matches.length * 30 * (state.combo > 1 ? state.combo : 1);
@@ -187,30 +178,23 @@ function resolveMatches() {
     if (state.combo > 1) animateCombo(state.combo);
   }
 
-  // 消除动画
+  // 直接标记需要消除的单元格
   const matched = new Set();
   matches.flat().forEach(cell => {
-    if (matched.has(cell)) return;
     matched.add(cell);
-    cell.el.firstChild.classList.add("fading");
     cell.type = -1;
   });
 
-  setTimeout(() => {
-    matched.forEach(cell => {
-      cell.el.firstChild.src = "";
-      cell.el.firstChild.classList.remove("fading");
-    });
-    
-    collapse();
-    refill();
-    
-    setTimeout(resolveMatches, 200);
-  }, 400);
+  // 简化流程：立即执行下落和填充
+  collapseAndRefill();
+  
+  // 检查是否有新的匹配
+  setTimeout(resolveMatches, 200);
 }
 
-// 下落逻辑
-function collapse() {
+// 合并下落和填充逻辑
+function collapseAndRefill() {
+  // 下落逻辑
   for (let j = 0; j < 6; j++) {
     let empty = 0;
     for (let i = 5; i >= 0; i--) {
@@ -224,10 +208,8 @@ function collapse() {
       }
     }
   }
-}
-
-// 填充新图标
-function refill() {
+  
+  // 填充新图标
   for (let j = 0; j < 6; j++) {
     for (let i = 0; i < 6; i++) {
       if (state.board[i][j].type === -1) {
@@ -272,7 +254,6 @@ function initAudio() {
   elements.bgm.muted = !state.musicOn;
   elements.musicBtn.textContent = state.musicOn ? "🔊" : "🔇";
   
-  // 解决自动播放限制
   document.addEventListener('click', function autoPlay() {
     elements.bgm.play().catch(console.error);
     document.removeEventListener('click', autoPlay);
@@ -292,7 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initAudio();
   preloadImages();
   
-  // 事件监听
   elements.startBtn.onclick = initGame;
   elements.musicBtn.onclick = function() {
     state.musicOn = !state.musicOn;
